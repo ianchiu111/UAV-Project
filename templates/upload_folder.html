@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Image or Folder</title>
+</head>
+<body>
+  <h1>Upload via File or Folder</h1>
+
+  <!-- 
+       We post everything to the same endpoint, "/process". 
+       The server-side logic will then figure out if we got
+       a single file or multiple folder files.
+  -->
+  <form action="/process" method="post" enctype="multipart/form-data">
+    <!-- Single-file upload -->
+    <p>
+      <label for="file">Upload Single Image File:</label>
+      <input type="file" name="single_file" id="file">
+    </p>
+    
+    <p>OR</p>
+    
+    <!-- Folder upload (webkitdirectory) -->
+    <p>
+      <label for="folder">Upload Entire Folder of Images:</label><br>
+      <input
+        type="file"
+        id="folder"
+        name="folder"
+        webkitdirectory
+        directory
+        multiple
+      />
+    </p>
+
+    <p>
+      <label for="n">Number of images to pick randomly (if folder is uploaded):</label>
+      <input type="number" name="n" id="n" value="1" min="1">
+    </p>
+
+    <button type="submit">Submit</button>
+  </form>
+</body>
+</html>

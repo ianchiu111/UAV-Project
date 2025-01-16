@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Upload Image: File or Folder</title>
+  <style>
+    body { font-family: sans-serif; margin: 20px; }
+    label { display: inline-block; width: 160px; }
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+  
+  <h1>Upload Image</h1>
+  <h2>Please Choose File or Folder</h2>
+
+  <form action="/process" method="post" enctype="multipart/form-data">
+    <!-- Single-file upload -->
+    <p>
+      <label for="file">Single Image File:</label>
+      <input type="file" name="file" id="file">
+    </p>
+
+    <p>OR</p>
+    
+    <!-- Folder upload (webkitdirectory) -->
+    <p>
+      <label for="folder">Folder of Images:</label>
+      <input
+        type="file"
+        id="folder"
+        name="folder"
+        webkitdirectory
+        directory
+        multiple
+      />
+    </p>
+
+    <!-- N images if uploading a folder -->
+    <p>
+      <label for="n"># of images in folder:</label>
+      <input type="number" name="n" id="n" value="1" min="1" />
+    </p>
+
+    <!-- Buttons: Cancel clears both inputs -->
+    <button type="button" id="cancelBtn">Cancel</button>
+    <button type="submit" id="submitBtn">Submit</button>
+  </form>
+
+  <!-- JavaScript to apply logic -->
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const fileInput   = document.getElementById("file");
+      const folderInput = document.getElementById("folder");
+      const cancelBtn   = document.getElementById("cancelBtn");
+      const submitBtn   = document.getElementById("submitBtn");
+      const nInput      = document.getElementById("n");
+
+      /**
+       Mechanism
+
+       * 1) If both single-file and folder are chosen, the user is disable to submit.
+       * 2) Otherwise, re-enable submit.
+       */
+      function checkBothSelected() {
+        if (fileInput.files.length > 0 && folderInput.files.length > 0) {
+          alert("Please select EITHER a single file OR a folder, not both.");
+          submitBtn.disabled = true;
+        } else {
+          submitBtn.disabled = false;
+        }
+      }
+
+      /**
+       * Check how many valid images (jpg/jpeg/png) are in the folder.
+       * Then ensure `nInput` is not greater than that count.
+       */
+      function enforceFolderMax() {
+        const files = Array.from(folderInput.files);
+        const allowedExt = [".jpg", ".jpeg", ".png"];
+
+        // Count how many files end with the allowed extensions.
+        let imageCount = 0;
+        for (const f of files) {
+          const lowerName = f.name.toLowerCase();
+          if (allowedExt.some(ext => lowerName.endsWith(ext))) {
+            imageCount++;
+          }
+        }
+
+        // If no images are found, we can set a minimum of 1
+        // (or you could handle it differently).
+        if (imageCount === 0) {
+          nInput.max = 1;   // or set to 0 to forbid picking any
+          nInput.value = 1; // or 0
+        } else {
+          // Set the max attribute to the # of images found.
+          nInput.max = imageCount;
+
+          // If current value is bigger than the imageCount, reset it.
+          if (parseInt(nInput.value, 10) > imageCount) {
+            nInput.value = imageCount;
+          }
+        }
+      }
+
+      // On file selection (single or folder), run these checks.
+      fileInput.addEventListener("change", () => {
+        checkBothSelected();
+        // If user picks a single file, we can ignore folder logic
+        // or potentially reset folder. 
+        // Up to you if you want to do that automatically.
+      });
+
+      folderInput.addEventListener("change", () => {
+        checkBothSelected();
+        enforceFolderMax();
+      });
+
+      // Cancel button clears both inputs and re-enables submit
+      cancelBtn.addEventListener("click", (event) => {
+        event.preventDefault();
+        fileInput.value = "";
+        folderInput.value = "";
+        nInput.value = 1;
+        nInput.max = "";
+        submitBtn.disabled = false;
+      });
+    });
+  </script>
+  
+</body>
+</html>

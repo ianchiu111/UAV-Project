@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Random Images</title>
+</head>
+<body>
+  <h1>Random Images from Folder</h1>
+  <form action="/random" method="post">
+    <p>
+      <label for="path">Folder Path:</label>
+      <input type="text" name="path" id="path" placeholder="C:/my_images">
+    </p>
+    <p>
+      <label for="n">Number of Images (n):</label>
+      <input type="number" name="n" id="n" value="1">
+    </p>
+    <button type="submit">Get Random Images</button>
+  </form>
+</body>
+</html>
